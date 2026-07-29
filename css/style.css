@@ -900,15 +900,26 @@ body.dark-theme .lyrics-container {
   gap: 4px;
 }
 
-.toggle-translation-btn {
+.translation-mode-group {
+  display: inline-flex;
+  height: 36px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--paper-3);
+}
+
+.translation-mode-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   height: 36px;
-  padding: 0 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--paper-3);
+  min-width: 32px;
+  padding: 0 8px;
+  border: 0;
+  border-left: 1px solid var(--border);
+  background: transparent;
   color: var(--ink-2);
   font-size: 12px;
   font-weight: 600;
@@ -916,18 +927,27 @@ body.dark-theme .lyrics-container {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.toggle-translation-btn:hover {
+.translation-mode-btn:first-child {
+  border-left: 0;
+}
+
+.translation-mode-btn:hover {
   background: var(--accent-3);
-  border-color: var(--accent-1);
   color: var(--ink-1);
-  transform: translateY(-1px);
 }
 
-.toggle-translation-btn:active {
-  transform: scale(0.98);
+.translation-mode-btn.active {
+  background: var(--accent-1);
+  color: var(--paper-1);
+}
+
+.translation-mode-btn:focus-visible {
+  position: relative;
+  outline: 2px solid var(--accent-2);
+  outline-offset: -2px;
 }
 
 body.hide-translation .lyric-translation {
@@ -1425,7 +1445,7 @@ body::-webkit-scrollbar-thumb:hover,
     padding: 0 10px;
   }
 
-  .toggle-translation-btn {
+  .translation-mode-btn {
     height: 36px;
     font-size: 11px;
   }

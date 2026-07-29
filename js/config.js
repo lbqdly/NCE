@@ -106,6 +106,6 @@ export function createDOMReferences() {
     bookSelects: Array.from(document.querySelectorAll('.book-select')),
     prevUnitBtn: document.querySelector('#prevUnitBtn'),
     nextUnitBtn: document.querySelector('#nextUnitBtn'),
-    toggleTranslationBtn: document.querySelector('#toggleTranslationBtn'),
+    translationModeButtons: Array.from(document.querySelectorAll('[data-translation-mode]')),
   };
 }

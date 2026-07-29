@@ -825,13 +825,13 @@ export class ReadingSystem {
   // =========================================================================
 
   /**
-   * 切换翻译显示模式
+   * 设置翻译显示模式
+   * @param {string} mode - 翻译显示模式
    */
-  toggleTranslationMode() {
-    const currentIndex = this.config.TRANSLATION_MODES.indexOf(this.state.translationMode);
-    const nextIndex =
-      currentIndex === -1 ? 0 : (currentIndex + 1) % this.config.TRANSLATION_MODES.length;
-    this.state.translationMode = this.config.TRANSLATION_MODES[nextIndex];
+  setTranslationMode(mode) {
+    if (!this.config.TRANSLATION_MODES.includes(mode)) return;
+
+    this.state.translationMode = mode;
     setStorage(this.config.STORAGE_KEYS.TRANSLATION_MODE, this.state.translationMode);
     this.updateTranslationToggle();
   }
@@ -850,34 +850,16 @@ export class ReadingSystem {
    * 更新翻译切换 UI
    */
   updateTranslationToggle() {
-    if (!this.dom.toggleTranslationBtn) return;
-
     const mode = this.state.translationMode;
     toggleClass(document.body, 'hide-translation', mode === 'hide');
     toggleClass(document.body, 'blur-translation', mode === 'blur');
     toggleClass(document.body, 'only-chinese-translation', mode === 'onlyChinese');
 
-    let text = '双';
-    let pressed = 'true';
-    let label = '显示双语';
-
-    if (mode === 'blur') {
-      text = '糊';
-      pressed = 'mixed';
-      label = '模糊翻译';
-    } else if (mode === 'hide') {
-      text = '英';
-      pressed = 'false';
-      label = '仅显示英文';
-    } else if (mode === 'onlyChinese') {
-      text = '中';
-      pressed = 'true';
-      label = '仅显示中文';
-    }
-
-    setText(this.dom.toggleTranslationBtn, text);
-    this.dom.toggleTranslationBtn.setAttribute('aria-pressed', pressed);
-    this.dom.toggleTranslationBtn.setAttribute('aria-label', label);
+    this.dom.translationModeButtons.forEach((button) => {
+      const isActive = button.dataset.translationMode === mode;
+      toggleClass(button, 'active', isActive);
+      button.setAttribute('aria-pressed', String(isActive));
+    });
   }
 
   // =========================================================================
@@ -1136,13 +1118,15 @@ export class ReadingSystem {
    * 绑定翻译切换事件
    */
   bindTranslationToggle() {
-    if (this.bindingFlags.translationToggle || !this.dom.toggleTranslationBtn) {
+    if (this.bindingFlags.translationToggle || !this.dom.translationModeButtons.length) {
       return;
     }
     this.bindingFlags.translationToggle = true;
 
-    on(this.dom.toggleTranslationBtn, 'click', () => {
-      this.toggleTranslationMode();
+    this.dom.translationModeButtons.forEach((button) => {
+      on(button, 'click', () => {
+        this.setTranslationMode(button.dataset.translationMode);
+      });
     });
   }
 
