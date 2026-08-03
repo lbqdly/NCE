@@ -50,7 +50,10 @@ export class ReadingSystem {
       playerControls: false,
       navigation: false,
       translationToggle: false,
+      translationShortcuts: false,
     };
+
+    this.translationShortcutHandler = null;
 
     // 启动初始化
     this.init();
@@ -906,6 +909,7 @@ export class ReadingSystem {
     this.bindPlayerControls();
     this.bindNavigation();
     this.bindTranslationToggle();
+    this.bindTranslationShortcuts();
     this.bindWindowEvents();
   }
 
@@ -1131,6 +1135,38 @@ export class ReadingSystem {
   }
 
   /**
+   * 绑定字幕模式数字快捷键
+   */
+  bindTranslationShortcuts() {
+    if (this.bindingFlags.translationShortcuts || !this.dom.translationModeButtons.length) {
+      return;
+    }
+    this.bindingFlags.translationShortcuts = true;
+
+    const shortcuts = {
+      '1': 'hide',
+      '2': 'show',
+      '3': 'onlyChinese',
+      '4': 'blur',
+    };
+
+    this.translationShortcutHandler = (event) => {
+      const target = event.target;
+      const isEditable = target?.isContentEditable ||
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target?.tagName);
+      if (isEditable || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+
+      const mode = shortcuts[event.key];
+      if (!mode) return;
+
+      event.preventDefault();
+      this.setTranslationMode(mode);
+    };
+
+    on(document, 'keydown', this.translationShortcutHandler);
+  }
+
+  /**
    * 绑定窗口事件
    */
   bindWindowEvents() {
@@ -1149,6 +1185,10 @@ export class ReadingSystem {
    * 销毁系统，清理资源
    */
   destroy() {
+    if (this.translationShortcutHandler) {
+      document.removeEventListener('keydown', this.translationShortcutHandler);
+      this.translationShortcutHandler = null;
+    }
     this.eventManager.clear();
     this.lrcCache.clear();
     this.audioPreload.clear();

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 const classNames = new Set();
+const documentListeners = new Map();
 globalThis.document = {
   body: {
     classList: {
@@ -10,6 +11,12 @@ globalThis.document = {
         else classNames.delete(name);
       },
     },
+  },
+  addEventListener(event, handler) {
+    documentListeners.set(event, handler);
+  },
+  removeEventListener(event, handler) {
+    if (documentListeners.get(event) === handler) documentListeners.delete(event);
   },
 };
 globalThis.localStorage = new Map();
@@ -60,4 +67,44 @@ test('setTranslationMode applies each selected mode and updates all buttons', ()
   assert(classNames.has('blur-translation'));
   assert(!classNames.has('hide-translation'));
   assert(!classNames.has('only-chinese-translation'));
+});
+
+test('translation shortcuts select modes and ignore editable controls', () => {
+  const system = Object.create(ReadingSystem.prototype);
+  const selectedModes = [];
+  system.dom = { translationModeButtons: [{ dataset: { translationMode: 'hide' } }] };
+  system.bindingFlags = { translationShortcuts: false };
+  system.eventManager = { clear() {} };
+  system.lrcCache = { clear() {} };
+  system.audioPreload = { clear() {} };
+  system.resourceLoader = { cancel() {} };
+  system.setTranslationMode = (mode) => selectedModes.push(mode);
+
+  system.bindTranslationShortcuts();
+  const handler = documentListeners.get('keydown');
+  assert.equal(typeof handler, 'function');
+
+  for (const [key, mode] of [['1', 'hide'], ['2', 'show'], ['3', 'onlyChinese'], ['4', 'blur']]) {
+    const event = { key, target: { tagName: 'BODY' }, preventDefault() { this.prevented = true; } };
+    handler(event);
+    assert.equal(event.prevented, true);
+    assert.equal(selectedModes.at(-1), mode);
+  }
+
+  for (const target of [
+    { tagName: 'INPUT' },
+    { tagName: 'TEXTAREA' },
+    { tagName: 'SELECT' },
+    { tagName: 'DIV', isContentEditable: true },
+  ]) {
+    const ignored = { key: '1', target, preventDefault() { this.prevented = true; } };
+    handler(ignored);
+    assert.equal(selectedModes.length, 4);
+    assert.equal(ignored.prevented, undefined);
+  }
+
+  handler({ key: 'x', target: { tagName: 'BODY' }, preventDefault() { throw new Error('should not prevent'); } });
+  handler({ key: '1', ctrlKey: true, target: { tagName: 'BODY' }, preventDefault() { throw new Error('should not prevent'); } });
+  system.destroy();
+  assert.equal(documentListeners.has('keydown'), false);
 });
