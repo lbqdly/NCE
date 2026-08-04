@@ -1,9 +1,5 @@
 # 新概念英语 · 全四册在线点读系统
 
-[![Stars](https://img.shields.io/github/stars/ichochy/nce.svg?style=social)](https://github.com/ichochy/nce/stargazers)
-[![License](https://img.shields.io/github/license/ichochy/nce)](https://github.com/ichochy/nce/blob/main/LICENSE)
-[![Demo](https://img.shields.io/badge/Demo-在线体验-brightgreen)](http://nce.ichochy.com)
-
 **《New Concept English》** 全四册在线课文朗读、**单句点读**、中英对照，随时随地自学英语！
 
 ---
@@ -15,8 +11,6 @@
 - 📖 **中英对照**：逐句显示中英文，便于理解
 - 📱 **响应式设计**：手机、平板、电脑均可流畅使用
 - 🚀 **无需安装**：浏览器直接访问，随时学习
-
-**在线体验**：👉 **[http://nce.ichochy.com](http://nce.ichochy.com)**
 
 ---
 
@@ -61,7 +55,6 @@
 - **前端**：HTML + CSS + JavaScript（纯静态实现）
 - **音频来源**：美音音频来自 [tangx/New-Concept-English](https://github.com/tangx/New-Concept-English)
 - **中文字幕**：由 Gemini AI 生成（已尽力优化，但可能存在少量错误，欢迎大家指正与贡献）
-- **翻译脚本**：作者自研 Python 工具 [iGSTT](https://ichochy.com/posts/shell/20251015.html)
 
 ---
 
@@ -69,7 +62,6 @@
 
 - 本项目**仅供个人学习研究使用**，非商业用途。
 - 所有内容来源于互联网，我们不拥有版权。
-- 如有侵权，请联系 [me@ichochy.com](mailto:me@ichochy.com) 及时处理。
 - **强烈建议**支持正版，购买官方教材与音频。
 
 ---
@@ -86,10 +78,3 @@
 
 **Keep learning — progress comes with persistence.**  
 **坚持学习，每一天都有进步。**
-
----
-
-**作者**：iChochy  
-**Blog**：https://ichochy.com  
-**Email**：me@ichochy.com  
-**GitHub**：https://github.com/ichochy/nce
